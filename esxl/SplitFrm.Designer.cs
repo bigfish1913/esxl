@@ -28,26 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
-            button1 = new Button();
+            txtFilePath = new TextBox();
+            btnSelect = new Button();
             label1 = new Label();
             SuspendLayout();
             // 
-            // textBox1
+            // txtFilePath
             // 
-            textBox1.Location = new Point(124, 62);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(289, 30);
-            textBox1.TabIndex = 0;
+            txtFilePath.Location = new Point(124, 62);
+            txtFilePath.Name = "txtFilePath";
+            txtFilePath.Size = new Size(289, 30);
+            txtFilePath.TabIndex = 0;
             // 
-            // button1
+            // btnSelect
             // 
-            button1.Location = new Point(433, 60);
-            button1.Name = "button1";
-            button1.Size = new Size(51, 34);
-            button1.TabIndex = 1;
-            button1.Text = "...";
-            button1.UseVisualStyleBackColor = true;
+            btnSelect.Location = new Point(433, 60);
+            btnSelect.Name = "btnSelect";
+            btnSelect.Size = new Size(51, 34);
+            btnSelect.TabIndex = 1;
+            btnSelect.Text = "...";
+            btnSelect.UseVisualStyleBackColor = true;
+            btnSelect.Click += btnSelect_Click;
             // 
             // label1
             // 
@@ -64,8 +65,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(527, 717);
             Controls.Add(label1);
-            Controls.Add(button1);
-            Controls.Add(textBox1);
+            Controls.Add(btnSelect);
+            Controls.Add(txtFilePath);
             Name = "SplitFrm";
             Text = "SplitFrm";
             Load += SplitFrm_Load;
@@ -75,8 +76,8 @@
 
         #endregion
 
-        private TextBox textBox1;
-        private Button button1;
+        private TextBox txtFilePath;
+        private Button btnSelect;
         private Label label1;
     }
 }
