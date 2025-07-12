@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
@@ -11,9 +12,11 @@ namespace esxl.Help
 {
     internal class Updater
     {
+        private static Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
         public async Task<bool> CheckUpdateAsync()
         {
-            string currentVersion = Congi.LocalVersion;
+            string? currentVersion = Config.GetValueByKey("Version");
             using (HttpClient client = new HttpClient())
             {
                 string apiUrl = "https://gitee.com/api/v5/repos/laofublog/esxl/releases?access_token=da63399fc78bb7e9df48a660eab43d42&page=1&per_page=20&direction=desc";

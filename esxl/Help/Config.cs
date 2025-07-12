@@ -10,13 +10,13 @@ namespace esxl.Help
     internal class Config
     {
 
-        public static String GetValueByKey(string key)
+        public static string? GetValueByKey(string key)
         {
             var keys= ConfigurationManager.AppSettings.AllKeys;
             if (keys.Contains(key))
                 return ConfigurationManager.AppSettings[key];
 
-            return null
+            return null;
         }
     }
 }
