@@ -24,15 +24,7 @@ namespace esxl
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            var dialog = new OpenFileDialog
-            {
-                Title = "选择Excel文件",
-                Filter = "Excel文件|*.xlsx;*.xlsm;*.xls"
-            };
-            if (dialog.ShowDialog(this) == DialogResult.OK)
-            {
-                txtFilePath.Text = dialog.FileName;
-            }
+            
 
         }
     }

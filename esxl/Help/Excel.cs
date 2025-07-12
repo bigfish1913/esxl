@@ -167,7 +167,7 @@ namespace esxl.Help
                         {
                             ICell cell = row.GetCell(j);
                             if (cell != null && cell.CellType == CellType.Numeric && DateUtil.IsCellDateFormatted(cell))
-                                dataRow[j] = cell.DateCellValue.ToString("yyyy/MM/dd");
+                                dataRow[j] = cell.DateCellValue.Value.ToString("yyyy/MM/dd");
                             else
                             {
                                 //dataRow[j] = row.GetCell(j).ToString();
@@ -258,6 +258,67 @@ namespace esxl.Help
             return dt;
         }
 
-    }
 
+        public void GroupAndExport(string inputPath, string outputDir, int groupColumnIndex)
+        {
+            // 确保输出目录存在
+            Directory.CreateDirectory(outputDir);
+
+            // 读取原始 Excel
+            using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new XSSFWorkbook(fs);
+                ISheet sheet = workbook.GetSheetAt(0);
+
+                // 按分组列构建字典（Key: 分组值, Value: 行数据）
+                var groups = new Dictionary<string, List<IRow>>();
+                for (int rowIndex = 1; rowIndex <= sheet.LastRowNum; rowIndex++) // 跳过标题行
+                {
+                    IRow row = sheet.GetRow(rowIndex);
+                    if (row == null) continue;
+
+                    ICell groupCell = row.GetCell(groupColumnIndex);
+                    string groupKey = groupCell?.ToString() ?? "UNKNOWN";
+
+                    if (!groups.ContainsKey(groupKey))
+                        groups[groupKey] = new List<IRow>();
+                    groups[groupKey].Add(row);
+                }
+
+                // 为每个分组创建新工作簿并保存
+                foreach (var group in groups)
+                {
+                    IWorkbook groupWorkbook = new XSSFWorkbook();
+                    ISheet groupSheet = groupWorkbook.CreateSheet(group.Key);
+
+                    // 复制标题行（假设第一行为标题）
+                    IRow headerRow = sheet.GetRow(0);
+                    IRow newHeader = groupSheet.CreateRow(0);
+                    for (int i = 0; i < headerRow.LastCellNum; i++)
+                    {
+                        newHeader.CreateCell(i).SetCellValue(headerRow.GetCell(i).ToString());
+                    }
+
+                    // 填充分组数据
+                    int dataRowIndex = 1;
+                    foreach (IRow row in group.Value)
+                    {
+                        IRow newRow = groupSheet.CreateRow(dataRowIndex++);
+                        for (int i = 0; i < row.LastCellNum; i++)
+                        {
+                            newRow.CreateCell(i).SetCellValue(row.GetCell(i)?.ToString() ?? "");
+                        }
+                    }
+
+                    // 保存分组文件
+                    string outputPath = Path.Combine(outputDir, $"{group.Key}.xlsx");
+                    using (var outFs = new FileStream(outputPath, FileMode.Create))
+                    {
+                        groupWorkbook.Write(outFs);
+                    }
+                }
+            }
+        }
+
+    }
 }

@@ -28,44 +28,68 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnSplit = new Button();
-            btnUpdate = new Button();
+            btnGroupBy = new Button();
+            label1 = new Label();
+            btnSelect = new Button();
+            txtFilePath = new TextBox();
             SuspendLayout();
             // 
-            // btnSplit
+            // btnGroupBy
             // 
-            btnSplit.Location = new Point(141, 114);
-            btnSplit.Name = "btnSplit";
-            btnSplit.Size = new Size(112, 34);
-            btnSplit.TabIndex = 0;
-            btnSplit.Text = "Sheet拆分保存";
-            btnSplit.UseVisualStyleBackColor = true;
-            btnSplit.Click += btnSplit_Click;
+            btnGroupBy.Location = new Point(75, 114);
+            btnGroupBy.Name = "btnGroupBy";
+            btnGroupBy.Size = new Size(112, 34);
+            btnGroupBy.TabIndex = 0;
+            btnGroupBy.Text = "列同名分类保存";
+            btnGroupBy.UseVisualStyleBackColor = true;
+            btnGroupBy.Click += btnGroupBy_Click;
             // 
-            // btnUpdate
+            // label1
             // 
-            btnUpdate.Location = new Point(314, 114);
-            btnUpdate.Name = "btnUpdate";
-            btnUpdate.Size = new Size(112, 34);
-            btnUpdate.TabIndex = 1;
-            btnUpdate.Text = "检查更新";
-            btnUpdate.UseVisualStyleBackColor = true;
+            label1.AutoSize = true;
+            label1.Location = new Point(31, 39);
+            label1.Name = "label1";
+            label1.Size = new Size(100, 24);
+            label1.TabIndex = 5;
+            label1.Text = "文件路径：";
+            // 
+            // btnSelect
+            // 
+            btnSelect.Location = new Point(446, 34);
+            btnSelect.Name = "btnSelect";
+            btnSelect.Size = new Size(51, 34);
+            btnSelect.TabIndex = 4;
+            btnSelect.Text = "...";
+            btnSelect.UseVisualStyleBackColor = true;
+            btnSelect.Click += btnSelect_Click;
+            // 
+            // txtFilePath
+            // 
+            txtFilePath.Location = new Point(137, 36);
+            txtFilePath.Name = "txtFilePath";
+            txtFilePath.Size = new Size(289, 30);
+            txtFilePath.TabIndex = 3;
             // 
             // MainFrm
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(571, 702);
-            Controls.Add(btnUpdate);
-            Controls.Add(btnSplit);
+            Controls.Add(label1);
+            Controls.Add(btnSelect);
+            Controls.Add(txtFilePath);
+            Controls.Add(btnGroupBy);
             Name = "MainFrm";
             Text = "Form1";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private Button btnSplit;
-        private Button btnUpdate;
+        private Button btnGroupBy;
+        private Label label1;
+        private Button btnSelect;
+        private TextBox txtFilePath;
     }
 }
