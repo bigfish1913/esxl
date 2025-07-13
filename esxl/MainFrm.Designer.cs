@@ -36,9 +36,10 @@
             // 
             // btnGroupBy
             // 
-            btnGroupBy.Location = new Point(75, 114);
+            btnGroupBy.Location = new Point(48, 81);
+            btnGroupBy.Margin = new Padding(2, 2, 2, 2);
             btnGroupBy.Name = "btnGroupBy";
-            btnGroupBy.Size = new Size(112, 34);
+            btnGroupBy.Size = new Size(71, 24);
             btnGroupBy.TabIndex = 0;
             btnGroupBy.Text = "列同名分类保存";
             btnGroupBy.UseVisualStyleBackColor = true;
@@ -47,17 +48,19 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(31, 39);
+            label1.Location = new Point(20, 28);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(100, 24);
+            label1.Size = new Size(68, 17);
             label1.TabIndex = 5;
             label1.Text = "文件路径：";
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(446, 34);
+            btnSelect.Location = new Point(284, 24);
+            btnSelect.Margin = new Padding(2, 2, 2, 2);
             btnSelect.Name = "btnSelect";
-            btnSelect.Size = new Size(51, 34);
+            btnSelect.Size = new Size(32, 24);
             btnSelect.TabIndex = 4;
             btnSelect.Text = "...";
             btnSelect.UseVisualStyleBackColor = true;
@@ -65,20 +68,22 @@
             // 
             // txtFilePath
             // 
-            txtFilePath.Location = new Point(137, 36);
+            txtFilePath.Location = new Point(87, 26);
+            txtFilePath.Margin = new Padding(2, 2, 2, 2);
             txtFilePath.Name = "txtFilePath";
-            txtFilePath.Size = new Size(289, 30);
+            txtFilePath.Size = new Size(185, 23);
             txtFilePath.TabIndex = 3;
             // 
             // MainFrm
             // 
-            AutoScaleDimensions = new SizeF(11F, 24F);
+            AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(571, 702);
+            ClientSize = new Size(363, 497);
             Controls.Add(label1);
             Controls.Add(btnSelect);
             Controls.Add(txtFilePath);
             Controls.Add(btnGroupBy);
+            Margin = new Padding(2, 2, 2, 2);
             Name = "MainFrm";
             Text = "Form1";
             ResumeLayout(false);

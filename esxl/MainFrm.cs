@@ -1,4 +1,5 @@
 using esxl.Help;
+using System.Threading.Tasks;
 
 namespace esxl
 {
@@ -22,7 +23,7 @@ namespace esxl
             {
                 txtFilePath.Text = dialog.FileName;
                 ExcelContext.InitContext(txtFilePath.Text);
-                var open=ExcelContext.ContextFile.OpenExcel();
+                var open = ExcelContext.ContextFile.OpenExcel();
                 if (!open)
                 {
                     MessageBox.Show("文件打开失败");
@@ -37,12 +38,39 @@ namespace esxl
         {
             if (txtFilePath.Text == "")
             {
-                MessageBox.Show("请选择Excel文件", "", MessageBoxButtons.OK,MessageBoxIcon.Warning);
+                MessageBox.Show("请选择Excel文件", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             var groupByFrm = new GroupByFrm();
             groupByFrm.ShowDialog(this);
 
+        }
+
+        private    void MainFrm_Load(object sender, EventArgs e)
+        {
+            
+            Task.Run(async () =>
+            {
+                Thread.Sleep(1000);
+                var release =await Updater.CheckUpdateAsync();
+                if (release == null)
+                {
+                    return;
+                }
+                var result = MessageBox.Show($"发现新版本{release.TagName}，是否更新？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                {
+                    return;
+                }
+                var download=await Updater.DownloadAndExtractAsync(release.Assets[0].BrowserDownloadUrl);
+                if (download)
+                {
+                    Updater.UpdateVersion(release.TagName);
+                     Updater.RestartApplication();
+                }
+                return;
+            });
+            
         }
     }
 }
