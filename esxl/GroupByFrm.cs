@@ -69,6 +69,7 @@ namespace esxl
                 return;
             }
             ExcelContext.ContextFile.ExportGroupData(sheetName, this.outputTxt.Text, data);
+            MessageBox.Show("处理完成");
 
 
         }

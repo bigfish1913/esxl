@@ -28,73 +28,83 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnGroupBy = new Button();
             label1 = new Label();
             btnSelect = new Button();
             txtFilePath = new TextBox();
+            btnGroupBy = new Button();
+            btnSheetSave = new Button();
             SuspendLayout();
-            // 
-            // btnGroupBy
-            // 
-            btnGroupBy.Location = new Point(48, 81);
-            btnGroupBy.Margin = new Padding(2, 2, 2, 2);
-            btnGroupBy.Name = "btnGroupBy";
-            btnGroupBy.Size = new Size(71, 24);
-            btnGroupBy.TabIndex = 0;
-            btnGroupBy.Text = "列同名分类保存";
-            btnGroupBy.UseVisualStyleBackColor = true;
-            btnGroupBy.Click += btnGroupBy_Click;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(20, 28);
-            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Location = new Point(56, 71);
             label1.Name = "label1";
-            label1.Size = new Size(68, 17);
-            label1.TabIndex = 5;
+            label1.Size = new Size(100, 24);
+            label1.TabIndex = 13;
             label1.Text = "文件路径：";
             // 
             // btnSelect
             // 
-            btnSelect.Location = new Point(284, 24);
-            btnSelect.Margin = new Padding(2, 2, 2, 2);
+            btnSelect.Location = new Point(471, 65);
             btnSelect.Name = "btnSelect";
-            btnSelect.Size = new Size(32, 24);
-            btnSelect.TabIndex = 4;
+            btnSelect.Size = new Size(50, 34);
+            btnSelect.TabIndex = 12;
             btnSelect.Text = "...";
             btnSelect.UseVisualStyleBackColor = true;
             btnSelect.Click += btnSelect_Click;
             // 
             // txtFilePath
             // 
-            txtFilePath.Location = new Point(87, 26);
-            txtFilePath.Margin = new Padding(2, 2, 2, 2);
+            txtFilePath.Location = new Point(161, 68);
             txtFilePath.Name = "txtFilePath";
-            txtFilePath.Size = new Size(185, 23);
-            txtFilePath.TabIndex = 3;
+            txtFilePath.Size = new Size(288, 30);
+            txtFilePath.TabIndex = 11;
+            // 
+            // btnGroupBy
+            // 
+            btnGroupBy.Location = new Point(100, 146);
+            btnGroupBy.Name = "btnGroupBy";
+            btnGroupBy.Size = new Size(112, 34);
+            btnGroupBy.TabIndex = 10;
+            btnGroupBy.Text = "列同名分类保存";
+            btnGroupBy.UseVisualStyleBackColor = true;
+            btnGroupBy.Click += btnGroupBy_Click;
+            // 
+            // btnSheetSave
+            // 
+            btnSheetSave.Location = new Point(278, 146);
+            btnSheetSave.Name = "btnSheetSave";
+            btnSheetSave.Size = new Size(144, 34);
+            btnSheetSave.TabIndex = 14;
+            btnSheetSave.Text = "sheet保存文件";
+            btnSheetSave.UseVisualStyleBackColor = true;
+            btnSheetSave.Click += btnSheetSave_Click;
             // 
             // MainFrm
             // 
-            AutoScaleDimensions = new SizeF(7F, 17F);
+            AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(363, 497);
+            ClientSize = new Size(559, 769);
+            Controls.Add(btnSheetSave);
             Controls.Add(label1);
             Controls.Add(btnSelect);
             Controls.Add(txtFilePath);
             Controls.Add(btnGroupBy);
-            Margin = new Padding(2, 2, 2, 2);
+            MinimumSize = new Size(176, 49);
             Name = "MainFrm";
             Text = "Form1";
+            TransparencyKey = Color.Fuchsia;
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Button btnGroupBy;
         private Label label1;
         private Button btnSelect;
         private TextBox txtFilePath;
+        private Button btnGroupBy;
+        private Button btnSheetSave;
     }
 }

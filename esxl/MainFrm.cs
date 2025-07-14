@@ -46,13 +46,13 @@ namespace esxl
 
         }
 
-        private    void MainFrm_Load(object sender, EventArgs e)
+        private void MainFrm_Load(object sender, EventArgs e)
         {
-            
+
             Task.Run(async () =>
             {
                 Thread.Sleep(1000);
-                var release =await Updater.CheckUpdateAsync();
+                var release = await Updater.CheckUpdateAsync();
                 if (release == null)
                 {
                     return;
@@ -62,15 +62,20 @@ namespace esxl
                 {
                     return;
                 }
-                var download=await Updater.DownloadAndExtractAsync(release.Assets[0].BrowserDownloadUrl);
+                var download = await Updater.DownloadAndExtractAsync(release.Assets[0].BrowserDownloadUrl);
                 if (download)
                 {
                     Updater.UpdateVersion(release.TagName);
-                     Updater.RestartApplication();
+                    Updater.RestartApplication();
                 }
                 return;
             });
-            
+
+        }
+
+        private void btnSheetSave_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

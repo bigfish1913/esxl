@@ -31,6 +31,7 @@
             txtFilePath = new TextBox();
             btnSelect = new Button();
             label1 = new Label();
+            btnStart = new Button();
             SuspendLayout();
             // 
             // txtFilePath
@@ -57,13 +58,24 @@
             label1.Name = "label1";
             label1.Size = new Size(100, 24);
             label1.TabIndex = 2;
-            label1.Text = "文件路径：";
+            label1.Text = "输出路径：";
+            // 
+            // btnStart
+            // 
+            btnStart.Location = new Point(196, 122);
+            btnStart.Name = "btnStart";
+            btnStart.Size = new Size(112, 34);
+            btnStart.TabIndex = 3;
+            btnStart.Text = "开始";
+            btnStart.UseVisualStyleBackColor = true;
+            btnStart.Click += btnStart_Click;
             // 
             // SplitFrm
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(527, 717);
+            ClientSize = new Size(527, 188);
+            Controls.Add(btnStart);
             Controls.Add(label1);
             Controls.Add(btnSelect);
             Controls.Add(txtFilePath);
@@ -79,5 +91,6 @@
         private TextBox txtFilePath;
         private Button btnSelect;
         private Label label1;
+        private Button btnStart;
     }
 }

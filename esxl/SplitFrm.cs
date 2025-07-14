@@ -24,8 +24,21 @@ namespace esxl
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            
+            var op = new OpenFileDialog
+            {
+                Title = ".Excelļ",
+                Filter = "Excelļ|*.xlsx;*.xlsm;*.xls"
+            };
+            if (op.ShowDialog(this) == DialogResult.OK)
+            {
+                txtFilePath.Text = op.FileName;
+            }
 
+        }
+
+        private void btnStart_Click(object sender, EventArgs e)
+        {
+             
         }
     }
 }
