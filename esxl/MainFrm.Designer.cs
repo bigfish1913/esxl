@@ -38,11 +38,11 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(56, 71);
+            label1.Location = new Point(12, 71);
             label1.Name = "label1";
-            label1.Size = new Size(100, 24);
+            label1.Size = new Size(143, 24);
             label1.TabIndex = 13;
-            label1.Text = "文件路径：";
+            label1.Text = "excel文件路径：";
             // 
             // btnSelect
             // 
@@ -63,7 +63,7 @@
             // 
             // btnGroupBy
             // 
-            btnGroupBy.Location = new Point(100, 146);
+            btnGroupBy.Location = new Point(56, 146);
             btnGroupBy.Name = "btnGroupBy";
             btnGroupBy.Size = new Size(112, 34);
             btnGroupBy.TabIndex = 10;
@@ -73,7 +73,7 @@
             // 
             // btnSheetSave
             // 
-            btnSheetSave.Location = new Point(278, 146);
+            btnSheetSave.Location = new Point(174, 146);
             btnSheetSave.Name = "btnSheetSave";
             btnSheetSave.Size = new Size(144, 34);
             btnSheetSave.TabIndex = 14;
@@ -85,7 +85,7 @@
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(559, 769);
+            ClientSize = new Size(559, 224);
             Controls.Add(btnSheetSave);
             Controls.Add(label1);
             Controls.Add(btnSelect);
@@ -95,6 +95,7 @@
             Name = "MainFrm";
             Text = "Form1";
             TransparencyKey = Color.Fuchsia;
+            Load += MainFrm_Load;
             ResumeLayout(false);
             PerformLayout();
         }

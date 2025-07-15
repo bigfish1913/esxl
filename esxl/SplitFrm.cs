@@ -1,4 +1,5 @@
-﻿using System;
+﻿using esxl.Help;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,21 +25,27 @@ namespace esxl
 
         private void btnSelect_Click(object sender, EventArgs e)
         {
-            var op = new OpenFileDialog
-            {
-                Title = ".Excelļ",
-                Filter = "Excelļ|*.xlsx;*.xlsm;*.xls"
-            };
+            var op = new FolderBrowserDialog();
+          
             if (op.ShowDialog(this) == DialogResult.OK)
             {
-                txtFilePath.Text = op.FileName;
+                txtFilePath.Text = op.SelectedPath;
             }
 
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-             
+            if (string.IsNullOrEmpty(txtFilePath.Text))
+            {
+                MessageBox.Show("请选择输出目录");
+                return;
+            }
+            ExcelContext.ContextFile.SplitSheetsToFiles(txtFilePath.Text);
+            MessageBox.Show("处理完成");
+            this.Hide();
+
+
         }
     }
 }

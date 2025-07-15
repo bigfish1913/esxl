@@ -36,9 +36,8 @@ namespace esxl
 
         private void btnGroupBy_Click(object sender, EventArgs e)
         {
-            if (txtFilePath.Text == "")
+            if (!showFeatureCheck())
             {
-                MessageBox.Show("请选择Excel文件", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             var groupByFrm = new GroupByFrm();
@@ -75,7 +74,26 @@ namespace esxl
 
         private void btnSheetSave_Click(object sender, EventArgs e)
         {
+            if (!showFeatureCheck())
+            {
+                 return;
+            }
+            SplitFrm frm = new();
+            frm.ShowDialog(this);
 
         }
+
+
+        private bool showFeatureCheck()
+        {
+            if (string.IsNullOrEmpty(txtFilePath.Text))
+            {
+                MessageBox.Show("请选择Excel文件", "", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return false;
+            }
+            return true;
+        }
+
+
     }
 }
