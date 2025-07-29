@@ -1,4 +1,4 @@
-﻿namespace esxl
+namespace esxl
 {
     partial class MainFrm
     {
@@ -33,6 +33,7 @@
             txtFilePath = new TextBox();
             btnGroupBy = new Button();
             btnSheetSave = new Button();
+            btnPublish = new Button();
             SuspendLayout();
             // 
             // label1
@@ -63,7 +64,7 @@
             // 
             // btnGroupBy
             // 
-            btnGroupBy.Location = new Point(56, 146);
+            btnGroupBy.Location = new Point(32, 146);
             btnGroupBy.Name = "btnGroupBy";
             btnGroupBy.Size = new Size(112, 34);
             btnGroupBy.TabIndex = 10;
@@ -73,7 +74,7 @@
             // 
             // btnSheetSave
             // 
-            btnSheetSave.Location = new Point(174, 146);
+            btnSheetSave.Location = new Point(161, 146);
             btnSheetSave.Name = "btnSheetSave";
             btnSheetSave.Size = new Size(144, 34);
             btnSheetSave.TabIndex = 14;
@@ -81,11 +82,22 @@
             btnSheetSave.UseVisualStyleBackColor = true;
             btnSheetSave.Click += btnSheetSave_Click;
             // 
+            // btnPublish
+            // 
+            btnPublish.Location = new Point(328, 146);
+            btnPublish.Name = "btnPublish";
+            btnPublish.Size = new Size(112, 34);
+            btnPublish.TabIndex = 15;
+            btnPublish.Text = "发布到Gitee";
+            btnPublish.UseVisualStyleBackColor = true;
+            btnPublish.Click += btnPublish_Click;
+            // 
             // MainFrm
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(559, 224);
+            Controls.Add(btnPublish);
             Controls.Add(btnSheetSave);
             Controls.Add(label1);
             Controls.Add(btnSelect);
@@ -107,5 +119,6 @@
         private TextBox txtFilePath;
         private Button btnGroupBy;
         private Button btnSheetSave;
+        private Button btnPublish;
     }
 }

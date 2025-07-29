@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,26 +17,34 @@ namespace esxl.Help
             string? currentVersion = Config.GetValueByKey("Version");
             using HttpClient client = new();
             string apiUrl = "https://gitee.com/api/v5/repos/laofublog/esxl/releases?access_token=da63399fc78bb7e9df48a660eab43d42&page=1&per_page=20&direction=desc";
-            var response = await client.GetStringAsync(apiUrl);
+            try
+            {
+                var response = await client.GetStringAsync(apiUrl);
 
-            // Fix for CS8600: Ensure the deserialization result is checked for null
-            ReleaseInfo[]? releaseList = JsonConvert.DeserializeObject<ReleaseInfo[]>(response);
-            if (releaseList == null|| releaseList.Length == 0)
-            {
-                return null;
-            }
-            ReleaseInfo? release = releaseList[0];
-            string latestVersion = release.TagName;
-            if (string.IsNullOrEmpty(currentVersion))
-            {
+                // Fix for CS8600: Ensure the deserialization result is checked for null
+                ReleaseInfo[]? releaseList = JsonConvert.DeserializeObject<ReleaseInfo[]>(response);
+                if (releaseList == null || releaseList.Length == 0)
+                {
+                    return null;
+                }
+                ReleaseInfo? release = releaseList[0];
+                string latestVersion = release.TagName;
+                if (string.IsNullOrEmpty(currentVersion))
+                {
+                    return release;
+                }
+                if (Version.Parse(latestVersion) <= Version.Parse(currentVersion))
+                {
+                    return null;
+                }
+
                 return release;
             }
-            if(Version.Parse(latestVersion) <= Version.Parse(currentVersion))
+            catch
             {
+                // If update check fails, silently return null
                 return null;
             }
-
-            return release;
         }
 
         public static async Task<bool> DownloadAndExtractAsync(string downloadUrl) 
@@ -48,23 +56,52 @@ namespace esxl.Help
             }
             string zipPath = Path.Combine(tempDir, "update.zip");
 
-            // 下载ZIP包
-            using (HttpClient client = new HttpClient())
-            using (var stream = await client.GetStreamAsync(downloadUrl))
-            using (var fileStream = File.Create(zipPath))
+            try
             {
-                await stream.CopyToAsync(fileStream);
-            }
+                // 下载ZIP包
+                using (HttpClient client = new HttpClient())
+                using (var stream = await client.GetStreamAsync(downloadUrl))
+                using (var fileStream = File.Create(zipPath))
+                {
+                    await stream.CopyToAsync(fileStream);
+                }
 
-            if (!File.Exists(zipPath))
+                if (!File.Exists(zipPath))
+                {
+                    return false;
+                }
+                
+                // Extract to a temporary directory first
+                string tempExtractDir = Path.Combine(tempDir, "extracted");
+                if (Directory.Exists(tempExtractDir))
+                {
+                    Directory.Delete(tempExtractDir, true);
+                }
+                Directory.CreateDirectory(tempExtractDir);
+                
+                ZipFile.ExtractToDirectory(zipPath, tempExtractDir, overwriteFiles: true);
+                
+                // Move files to application directory
+                foreach (var file in Directory.GetFiles(tempExtractDir))
+                {
+                    string destFile = Path.Combine(Application.StartupPath, Path.GetFileName(file));
+                    File.Copy(file, destFile, true);
+                }
+                
+                // Clean up
+                Directory.Delete(tempDir, true);
+                
+                return true;
+            }
+            catch
             {
+                // Clean up on failure
+                if (Directory.Exists(tempDir))
+                {
+                    Directory.Delete(tempDir, true);
+                }
                 return false;
             }
-            ZipFile.ExtractToDirectory(zipPath, Application.StartupPath, overwriteFiles: true);
-            return true;
-
-
-            // 解压到应用目录
         }
         public static void UpdateVersion(string newVersion)
         { 

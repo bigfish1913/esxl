@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,34 +9,31 @@ namespace esxl.Help
 {
     internal class ExcelContext
     {
-        public static ExcelFile ContextFile { get; set; }
-        private static ExcelContext? excelContext;
-        private static Dictionary<string, object>? cache;
+        private static List<ExcelFile> ContextFileList = new List<ExcelFile>();
 
-        public static ExcelContext InitContext(string filePath)
+        public static void AddFile(ExcelFile file)
         {
-            ContextFile = new ExcelFile(filePath);
-            excelContext = new ExcelContext();
-            cache = new Dictionary<string, object>();
-            return excelContext;
+            ContextFileList.Add(file);
         }
-
-        public static T LoadData<T>(string key, Func<T>  loadFunc) where T : class
+        
+        public static void Clear()
         {
-            if ( cache == null)
-            {
-                cache= new Dictionary<string, object>();
-            }
-            if ( cache.ContainsKey(key))
-            {
-                return (T)cache[key];
-            }
-            var data = loadFunc();
-            if (data != null)
-            {
-                cache.Add(key, data);
-            }
-            return data;
+            ContextFileList.Clear();
+        }
+        
+        public static void RemoveFile(ExcelFile file)
+        {
+            ContextFileList.Remove(file);
+        }
+        
+        public static ExcelFile? GetFile(string fileName)
+        {
+            return ContextFileList.FirstOrDefault(x => x.FileName == fileName);
+        }
+        
+        public static List<ExcelFile> GetAllFiles()
+        {
+            return ContextFileList;
         }
     }
 }

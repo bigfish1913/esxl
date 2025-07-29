@@ -36,16 +36,17 @@
             progressBar1.Dock = DockStyle.Fill;
             progressBar1.Location = new Point(0, 0);
             progressBar1.Name = "progressBar1";
-            progressBar1.Size = new Size(458, 71);
+            progressBar1.Size = new Size(441, 35);
             progressBar1.TabIndex = 0;
             // 
             // ProcessFrm
             // 
             AutoScaleDimensions = new SizeF(11F, 24F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(458, 71);
+            ClientSize = new Size(441, 35);
             ControlBox = false;
             Controls.Add(progressBar1);
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             MdiChildrenMinimizedAnchorBottom = false;
             MinimizeBox = false;

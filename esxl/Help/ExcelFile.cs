@@ -1,4 +1,4 @@
-﻿using NPOI.HSSF.UserModel;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using System;
@@ -9,12 +9,31 @@ using System.Threading.Tasks;
 
 namespace esxl.Help
 {
-    internal class ExcelFile(string fileName)
+    public class ExcelFile
     {
-        private string fileName = fileName; //文件名
-        private string extName = System.IO.Path.GetExtension(fileName);
+        private string fileName = string.Empty;
+        private string extName = string.Empty;
 
-        private IWorkbook workbook;
+        private IWorkbook? workbook;
+
+        public required string FileName
+        {
+            get => fileName;
+            set
+            {
+                fileName = value;
+                extName = System.IO.Path.GetExtension(value)?.ToLower() ?? string.Empty;
+            }
+        }
+
+        public ExcelFile()
+        {
+        }
+
+        public ExcelFile(string fileName)
+        {
+            FileName = fileName; // 使用属性设置，确保extName也会被设置
+        }
 
         public bool OpenExcel()
         {
@@ -24,13 +43,13 @@ namespace esxl.Help
             }
             try
             {
-                using (var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                using (var fs = new FileStream(FileName, FileMode.Open, FileAccess.Read))
                 {
-                    workbook = Path.GetExtension(fileName) switch
+                    workbook = extName switch
                     {
                         ".xls" => new HSSFWorkbook(fs),
                         ".xlsx" => new XSSFWorkbook(fs),
-                        _ => throw new NotSupportedException("不支持的文件格式")
+                        _ => throw new NotSupportedException($"不支持的文件格式: {extName}")
                     };
                 }
                 return workbook != null;
@@ -40,12 +59,13 @@ namespace esxl.Help
                 Console.WriteLine($"打开Excel文件失败: {ex.Message}");
                 return false;
             }
-
-
         }
 
         public List<string> GetSheetList()
         {
+            if (workbook == null)
+                return new List<string>();
+
             var sheetCount = workbook.NumberOfSheets;
             List<string> list = new List<string>();
             for (int i = 0; i < sheetCount; i++)
@@ -55,10 +75,11 @@ namespace esxl.Help
             return list;
         }
 
-
-
         public Dictionary<string, List<IRow>> GroupDataByColumn(int groupColumnIndex, string sheetName)
         {
+            if (workbook == null)
+                return new Dictionary<string, List<IRow>>();
+
             ISheet sheet = workbook.GetSheet(sheetName);
 
             // 按分组列构建字典（Key: 分组值, Value: 行数据）
@@ -80,6 +101,9 @@ namespace esxl.Help
 
         public void ExportGroupData(string sheetName, string outPutDir, Dictionary<string, List<IRow>> groups)
         {
+            if (workbook == null)
+                return;
+
             ISheet sheet = workbook.GetSheet(sheetName);
 
             // 为每个分组创建新工作簿并保存
@@ -112,16 +136,17 @@ namespace esxl.Help
                     groupWorkbook.Write(outFs);
                 }
             }
-
-
         }
 
         public void SplitSheetsToFiles(string outputDir)
         {
+            if (string.IsNullOrEmpty(FileName) || workbook == null)
+                return;
+
             // 确保输出目录存在
             Directory.CreateDirectory(outputDir);
 
-            using FileStream fs = new(this.fileName, FileMode.Open, FileAccess.Read);
+            using FileStream fs = new(this.FileName, FileMode.Open, FileAccess.Read);
             // 根据文件扩展名选择工作簿类型
             IWorkbook sourceWorkbook = this.extName == ".xlsx"
                 ? new XSSFWorkbook(fs)
@@ -190,12 +215,204 @@ namespace esxl.Help
                 }
 
                 // 保存新文件
-                string outputPath = Path.Combine(outputDir, $"{Path.GetFileNameWithoutExtension(fileName)}_{sheetName}{extName}");
+                string outputPath = Path.Combine(outputDir, $"{Path.GetFileNameWithoutExtension(FileName)}_{sheetName}{extName}");
                 using (FileStream outFs = new FileStream(outputPath, FileMode.Create))
                 {
                     newWorkbook.Write(outFs);
                 }
                 newWorkbook.Close();
+            }
+        }
+
+        /// <summary>
+        /// 将单个工作表导出为独立Excel文件
+        /// </summary>
+        /// <param name="sheetName">要导出的工作表名称</param>
+        /// <param name="outputPath">输出文件路径</param>
+        public void ExportSingleSheet(string sheetName, string outputPath)
+        {
+            if (workbook == null)
+                return;
+
+            ISheet sourceSheet = workbook.GetSheet(sheetName);
+            if (sourceSheet == null)
+                return;
+
+            // 创建新工作簿
+            IWorkbook newWorkbook = workbook is XSSFWorkbook 
+                ? new XSSFWorkbook() 
+                : new HSSFWorkbook();
+            ISheet newSheet = newWorkbook.CreateSheet(sheetName);
+
+            // 复制列宽
+            for (int col = 0; col < sourceSheet.GetRow(0).LastCellNum; col++)
+            {
+                newSheet.SetColumnWidth(col, sourceSheet.GetColumnWidth(col));
+            }
+
+            // 逐行复制数据及样式
+            for (int rowIdx = 0; rowIdx <= sourceSheet.LastRowNum; rowIdx++)
+            {
+                IRow sourceRow = sourceSheet.GetRow(rowIdx);
+                if (sourceRow == null) continue;
+
+                IRow newRow = newSheet.CreateRow(rowIdx);
+                newRow.Height = sourceRow.Height;
+
+                // 复制单元格
+                for (int cellIdx = 0; cellIdx < sourceRow.LastCellNum; cellIdx++)
+                {
+                    ICell sourceCell = sourceRow.GetCell(cellIdx);
+                    if (sourceCell == null) continue;
+
+                    ICell newCell = newRow.CreateCell(cellIdx);
+
+                    // 创建新的样式并复制        
+                    ICellStyle newStyle = newWorkbook.CreateCellStyle();
+                    newStyle.CloneStyleFrom(sourceCell.CellStyle);
+                    newCell.CellStyle = newStyle;
+
+                    // 根据数据类型赋值
+                    switch (sourceCell.CellType)
+                    {
+                        case CellType.String:
+                            newCell.SetCellValue(sourceCell.StringCellValue);
+                            break;
+                        case CellType.Numeric:
+                            newCell.SetCellValue(sourceCell.NumericCellValue);
+                            break;
+                        case CellType.Boolean:
+                            newCell.SetCellValue(sourceCell.BooleanCellValue);
+                            break;
+                        case CellType.Formula:
+                            newCell.SetCellFormula(sourceCell.CellFormula);
+                            break;
+                        default:
+                            newCell.SetCellValue(string.Empty);
+                            break;
+                    }
+                }
+            }
+
+            // 保存文件
+            using (FileStream outFs = new FileStream(outputPath, FileMode.Create))
+            {
+                newWorkbook.Write(outFs);
+            }
+        }
+
+        /// <summary>
+        /// 获取工作表指定范围的数据
+        /// </summary>
+        /// <param name="sheetName">工作表名称</param>
+        /// <param name="startRow">起始行索引</param>
+        /// <param name="endRow">结束行索引</param>
+        /// <returns>单元格数据二维数组</returns>
+        public object[,] GetSheetDataRange(string sheetName, int startRow, int endRow)
+        {
+            if (workbook == null)
+                return new object[0, 0];
+
+            ISheet sheet = workbook.GetSheet(sheetName);
+            if (sheet == null)
+                return new object[0, 0];
+
+            // 确保行范围有效
+            startRow = Math.Max(0, startRow);
+            endRow = Math.Min(sheet.LastRowNum, endRow);
+            int rowCount = endRow - startRow + 1;
+
+            // 获取最大列数
+            int maxColCount = 0;
+            for (int i = startRow; i <= endRow; i++)
+            {
+                IRow row = sheet.GetRow(i);
+                if (row != null)
+                {
+                    maxColCount = Math.Max(maxColCount, row.LastCellNum);
+                }
+            }
+
+            // 填充数据
+            object[,] data = new object[rowCount, maxColCount];
+            for (int rowIdx = startRow; rowIdx <= endRow; rowIdx++)
+            {
+                IRow row = sheet.GetRow(rowIdx);
+                if (row == null) continue;
+
+                for (int colIdx = 0; colIdx < row.LastCellNum; colIdx++)
+                {
+                    ICell cell = row.GetCell(colIdx);
+                    data[rowIdx - startRow, colIdx] = cell?.ToString() ?? string.Empty;
+                }
+            }
+
+            return data;
+        }
+
+        /// <summary>
+        /// 在工作表指定位置插入数据
+        /// </summary>
+        /// <param name="sheetName">工作表名称</param>
+        /// <param name="data">要插入的数据</param>
+        /// <param name="startRow">起始行索引</param>
+        /// <param name="startCol">起始列索引</param>
+        public void InsertDataIntoSheet(string sheetName, object[,] data, int startRow, int startCol)
+        {
+            if (workbook == null)
+                return;
+
+            ISheet sheet = workbook.GetSheet(sheetName);
+            if (sheet == null)
+                return;
+
+            int rowCount = data.GetLength(0);
+            int colCount = data.GetLength(1);
+
+            // 插入数据
+            for (int rowIdx = 0; rowIdx < rowCount; rowIdx++)
+            {
+                IRow row = sheet.GetRow(startRow + rowIdx) ?? sheet.CreateRow(startRow + rowIdx);
+
+                for (int colIdx = 0; colIdx < colCount; colIdx++)
+                {
+                    ICell cell = row.GetCell(startCol + colIdx) ?? row.CreateCell(startCol + colIdx);
+                    
+                    // 根据数据类型设置单元格值
+                    object value = data[rowIdx, colIdx];
+                    if (value is string stringValue)
+                    {
+                        cell.SetCellValue(stringValue);
+                    }
+                    else if (value is double doubleValue)
+                    {
+                        cell.SetCellValue(doubleValue);
+                    }
+                    else if (value is bool boolValue)
+                    {
+                        cell.SetCellValue(boolValue);
+                    }
+                    else if (value is DateTime dateValue)
+                    {
+                        cell.SetCellValue(dateValue);
+                    }
+                    else
+                    {
+                        cell.SetCellValue(value?.ToString() ?? string.Empty);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 关闭工作簿并释放资源
+        /// </summary>
+        public void Close()
+        {
+            if (workbook != null)
+            {
+                workbook.Close();
+                workbook = null;
             }
         }
     }
