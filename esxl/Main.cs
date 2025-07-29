@@ -634,17 +634,22 @@ namespace esxl
         /// <param name="e"></param>
         private void fileTree_AfterSelect(object sender, TreeViewEventArgs e)
         {
+            // 切换到文件信息标签页
+            tabControl1.SelectedTab = fileInfoTabPage;
+            
             if (e.Node?.Tag is ExcelFile excelFile)
             {
                 // 显示文件信息
                 DisplayFileInfo(excelFile);
                 
-                // 预览数据（暂时显示第一张工作表）
+                // 预览数据（显示第一个工作表的数据）
                 PreviewExcelData(excelFile);
             }
             else if (e.Node?.Parent != null && e.Node.Parent.Tag is ExcelFile parentExcelFile)
             {
                 // 选中的是工作表节点，显示该工作表的数据
+                // 切换到数据预览标签页
+                tabControl1.SelectedTab = filePreviewTabPage;
                 PreviewExcelData(parentExcelFile, e.Node.Text);
             }
         }

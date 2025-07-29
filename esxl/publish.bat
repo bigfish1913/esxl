@@ -1,109 +1,59 @@
 @echo off
 setlocal enabledelayedexpansion
-echo 正在发布到Gitee...
 
-REM 获取当前目录
-set "SCRIPT_DIR=%~dp0"
-set "ROOT_DIR=%SCRIPT_DIR%"
-set "CONFIG_FILE=%SCRIPT_DIR%app.config"
-
-REM 检查app.config文件是否存在
-if not exist "%CONFIG_FILE%" (
-    echo 错误: 找不到配置文件 %CONFIG_FILE%
-    pause
-    exit /b 1
-)
-
-REM 从app.config文件中提取版本号
-set "VERSION=1.0.0"
-for /f "tokens=*" %%A in ('findstr "key=.Version." "%CONFIG_FILE%"') do (
-    set "line=%%A"
-    echo !line! | findstr "key=.Version." >nul
-    if not errorlevel 1 (
-        for /f "tokens=2 delims==" %%B in ("!line!") do (
-            set "temp_version=%%B"
-            REM 清理版本号字符串（移除空格和引号以及/>等字符）
-            set "temp_version=!temp_version: =!"
-            set "temp_version=!temp_version:"=!"
-            set "temp_version=!temp_version:/>=!"
-            set "temp_version=!temp_version:/=>!"
-            for /f "delims=>" %%C in ("!temp_version!") do (
-                set "clean_version=%%C"
-                if "!clean_version!" neq "" (
-                    set "VERSION=!clean_version!"
-                )
-            )
-        )
+echo 正在提取版本号...
+for /f "tokens=2 delims=value=" %%a in ('findstr /r "Version.*value" app.config') do (
+    for /f "tokens=1 delims= " %%b in ("%%a") do (
+        set "version=%%~b"
+        goto :found_version
     )
 )
 
-echo 当前版本: v%VERSION%
-
-REM 分解版本号
-for /f "tokens=1,2,3 delims=." %%a in ("%VERSION%") do (
-    set "MAJOR=%%a"
-    set "MINOR=%%b"
-    set "BUILD=%%c"
-)
-
-REM 增加构建版本号
-set /a BUILD+=1
-set "NEW_VERSION=%MAJOR%.%MINOR%.%BUILD%"
-
-echo 新版本: v%NEW_VERSION%
-
-REM 编译Release版本
-echo 正在编译Release版本...
-cd /d "%ROOT_DIR%"
-dotnet publish -c Release -o "publish" --self-contained -r win-x64
-if errorlevel 1 (
-    echo 编译失败，退出发布流程
+:found_version
+if "%version%"=="" (
+    echo 无法从app.config中提取版本号
     pause
     exit /b 1
 )
 
-REM 打包Release版本
-echo 正在打包Release版本...
-cd /d "%ROOT_DIR%"
-if exist "release.zip" del "release.zip"
-powershell -Command "Compress-Archive -Path 'publish/*' -DestinationPath 'release.zip' -Force"
-if errorlevel 1 (
-    echo 打包失败，退出发布流程
+echo 当前版本号: %version%
+
+echo 正在以Release模式编译项目...
+dotnet publish -c Release -o ./publish
+
+if %errorlevel% neq 0 (
+    echo 编译失败
     pause
-    exit /b 1
+    exit /b %errorlevel%
 )
 
-REM 添加所有更改
+echo 正在创建版本发布...
+echo 正在推送代码到Gitee...
 git add .
+git commit -m "Release version %version%"
+git push origin master
 
-REM 获取当前时间作为提交信息
-for /f "tokens=2 delims==" %%a in ('wmic OS Get localdatetime /value') do set "dt=%%a"
-set "YY=%dt:~2,2%" & set "YYYY=%dt:~0,4%" & set "MM=%dt:~4,2%" & set "DD=%dt:~6,2%"
-set "HH=%dt:~8,2%" & set "Min=%dt:~10,2%" & set "Sec=%dt:~12,2%"
-set "datestamp=%YYYY%-%MM%-%DD% %HH%:%Min%:%Sec%"
+echo 创建版本发布需要手动操作，请到Gitee页面创建新版本:
+echo 1. 访问项目页面
+echo 2. 点击"发布"标签
+echo 3. 点击"创建发布"
+echo 4. 版本号填写: %version%
+echo 5. 上传publish目录中的文件作为附件
 
-REM 提交更改
-git commit -m "Auto publish update %datestamp%"
-
-REM 创建带版本号的标签
-git tag -a "v%NEW_VERSION%" -m "Release version %NEW_VERSION%"
-
-REM 更新app.config中的版本号
-if exist "%CONFIG_FILE%.tmp" del "%CONFIG_FILE%.tmp"
-for /f "delims=" %%i in ('type "%CONFIG_FILE%"') do (
-    set "line=%%i"
-    echo !line! | findstr "key=.Version." >nul
-    if not errorlevel 1 (
-        echo !line:%VERSION%=%NEW_VERSION%! >> "%CONFIG_FILE%.tmp"
-    ) else (
-        echo !line! >> "%CONFIG_FILE%.tmp"
+echo 版本发布完成后，是否需要更新版本号？(y/n)
+set /p update_version=
+if /i "%update_version%"=="y" (
+    echo 请输入新版本号 (当前版本: %version%):
+    set /p new_version=
+    if "!new_version!" neq "" (
+        echo 更新版本号为 !new_version!
+        powershell -Command "(gc app.config) -replace 'Version.*value=\"[0-9.]*\"', 'Version value=\"!new_version!\"' | sc app.config"
+        git add app.config
+        git commit -m "Update version to !new_version!"
+        git push origin master
+        echo 版本号已更新为 !new_version! 并推送到Gitee
     )
 )
-move /y "%CONFIG_FILE%.tmp" "%CONFIG_FILE%"
 
-REM 推送所有更改和标签到Gitee
-git push origin master
-git push origin --tags
-
-echo 发布完成! 版本: v%NEW_VERSION%
+echo 发布脚本执行完成
 pause

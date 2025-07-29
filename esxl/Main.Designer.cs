@@ -46,6 +46,7 @@ namespace esxl
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.btnGroupSplit = new System.Windows.Forms.Button();
             this.btnSheetSplit = new System.Windows.Forms.Button();
+            this.btnMergeFiles = new System.Windows.Forms.Button();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.fileInfoTabPage = new System.Windows.Forms.TabPage();
@@ -226,6 +227,7 @@ namespace esxl
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.btnMergeFiles);
             this.splitContainer2.Panel1.Controls.Add(this.btnSheetSplit);
             this.splitContainer2.Panel1.Controls.Add(this.btnGroupSplit);
             this.splitContainer2.Panel1.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -243,7 +245,7 @@ namespace esxl
             this.btnGroupSplit.Location = new System.Drawing.Point(30, 30);
             this.btnGroupSplit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnGroupSplit.Name = "btnGroupSplit";
-            this.btnGroupSplit.Size = new System.Drawing.Size(120, 60);
+            this.btnGroupSplit.Size = new System.Drawing.Size(150, 60);
             this.btnGroupSplit.TabIndex = 0;
             this.btnGroupSplit.Text = "按分组拆分";
             this.btnGroupSplit.UseVisualStyleBackColor = true;
@@ -251,14 +253,25 @@ namespace esxl
             // 
             // btnSheetSplit
             // 
-            this.btnSheetSplit.Location = new System.Drawing.Point(180, 30);
+            this.btnSheetSplit.Location = new System.Drawing.Point(210, 30);
             this.btnSheetSplit.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.btnSheetSplit.Name = "btnSheetSplit";
-            this.btnSheetSplit.Size = new System.Drawing.Size(120, 60);
+            this.btnSheetSplit.Size = new System.Drawing.Size(150, 60);
             this.btnSheetSplit.TabIndex = 1;
             this.btnSheetSplit.Text = "按Sheet保存";
             this.btnSheetSplit.UseVisualStyleBackColor = true;
             this.btnSheetSplit.Click += new System.EventHandler(this.sheetSplitToolStripMenuItem_Click);
+            // 
+            // btnMergeFiles
+            // 
+            this.btnMergeFiles.Location = new System.Drawing.Point(390, 30);
+            this.btnMergeFiles.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.btnMergeFiles.Name = "btnMergeFiles";
+            this.btnMergeFiles.Size = new System.Drawing.Size(150, 60);
+            this.btnMergeFiles.TabIndex = 2;
+            this.btnMergeFiles.Text = "合并Excel文件";
+            this.btnMergeFiles.UseVisualStyleBackColor = true;
+            this.btnMergeFiles.Click += new System.EventHandler(this.btnMergeFiles_Click);
             // splitContainer3
             // 
             this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -474,5 +487,6 @@ namespace esxl
         private System.Windows.Forms.TabPage filePreviewTabPage;
         private System.Windows.Forms.TextBox fileInfoTextBox;
         private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Button btnMergeFiles;
     }
 }

@@ -68,8 +68,8 @@ namespace esxl
                 {
                     try
                     {
-                        // 确保publish.bat文件存在
-                        string scriptPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), "publish.bat");
+                        // 确保publish_gitee.bat文件存在
+                        string scriptPath = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(Application.ExecutablePath), "publish_gitee.bat");
                         
                         ProcessStartInfo startInfo = new ProcessStartInfo
                         {
